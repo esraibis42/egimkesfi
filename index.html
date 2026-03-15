@@ -4,144 +4,239 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Eğim Keşfi - Matematik Projesi</title>
+    <title>Eğim Master Pro | Esra İbiş</title>
     <style>
+        :root {
+            --primary: #00d2ff;
+            --secondary: #3a7bd5;
+            --bg: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --text: #f8fafc;
+        }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f0f8ff;
-            text-align: center;
-            color: #333;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 30px auto;
-            background: white;
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            border: 2px solid #3498db;
-        }
-
-        h1 {
-            color: #2c3e50;
-            border-bottom: 2px solid #3498db;
-            padding-bottom: 10px;
-        }
-
-        .input-group {
-            margin: 20px 0;
+            font-family: 'Poppins', sans-serif;
+            background: radial-gradient(circle at top right, #1e293b, #0f172a);
+            color: var(--text);
+            margin: 0;
             display: flex;
-            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Sol Panel - Kontrol Merkezi */
+        .sidebar {
+            width: 320px;
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
             gap: 20px;
+            z-index: 10;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+        }
+
+        .input-box {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #94a3b8;
         }
 
         input {
-            padding: 10px;
-            border: 2px solid #bdc3c7;
-            border-radius: 5px;
-            width: 100px;
-            font-size: 16px;
+            width: 100%;
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid var(--primary);
+            color: white;
+            font-size: 20px;
+            padding: 5px 0;
+            outline: none;
         }
 
-        #canvas-container {
-            margin: 30px auto;
+        .stat-card {
+            background: linear-gradient(135deg, var(--secondary), var(--primary));
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: auto;
+            text-align: center;
+        }
+
+        /* Sağ Panel - Simülasyon Alanı */
+        .main-content {
+            flex-grow: 1;
             position: relative;
-            width: 400px;
-            height: 300px;
-            background-image: linear-gradient(#e1e1e1 1px, transparent 1px), linear-gradient(90deg, #e1e1e1 1px, transparent 1px);
-            background-size: 20px 20px;
-            border: 1px solid #ccc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #grid-bg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image:
+                linear-gradient(rgba(0, 210, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 210, 255, 0.05) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        .canvas-container {
+            position: relative;
+            width: 80%;
+            height: 70%;
+            z-index: 5;
         }
 
         svg {
             width: 100%;
             height: 100%;
-        }
-
-        #slope-result {
-            font-size: 24px;
-            font-weight: bold;
-            color: #e67e22;
-            margin: 20px;
-        }
-
-        .feedback {
-            font-style: italic;
-            color: #7f8c8d;
-            height: 30px;
+            overflow: visible;
         }
 
         .bike {
-            font-size: 30px;
-            transition: all 0.5s ease;
+            font-size: 45px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .glow {
+            filter: drop-shadow(0 0 8px var(--primary));
+        }
+
+        .feedback-badge {
             position: absolute;
+            top: 40px;
+            right: 40px;
+            padding: 12px 25px;
+            background: rgba(0, 210, 255, 0.1);
+            border: 1px solid var(--primary);
+            border-radius: 50px;
+            font-weight: 600;
         }
     </style>
 </head>
 
 <body>
-    <div class="container">
-        <h1>📐 Eğim Keşfi Dünyası</h1>
-        <p>Dikey ve yatay uzunlukları gir, eğimin nasıl değiştiğini izle!</p>
 
-        <div class="input-group">
-            <div>
-                <label>Dikey (y): </label><br>
-                <input type="number" id="v-input" value="100" oninput="draw()">
-            </div>
-            <div>
-                <label>Yatay (x): </label><br>
-                <input type="number" id="h-input" value="200" oninput="draw()">
-            </div>
+    <div class="sidebar">
+        <div class="logo">EĞİM MASTER V1.0</div>
+
+        <div class="input-box">
+            <label>DİKEY YÜKSEKLİK (y)</label>
+            <input type="number" id="v-input" value="150" oninput="update()">
         </div>
 
-        <div id="slope-result">Eğim: 0.50</div>
-        <div id="feedback-text" class="feedback">Güzel bir rampa! 🚲</div>
+        <div class="input-box">
+            <label>YATAY UZUNLUK (x)</label>
+            <input type="number" id="h-input" value="350" oninput="update()">
+        </div>
 
-        <div id="canvas-container">
-            <svg id="svg-area">
-                <polygon id="triangle" points="50,250 250,250 250,150" fill="rgba(52, 152, 219, 0.3)" stroke="#3498db"
-                    stroke-width="3" />
-                <text id="bike-emoji" x="130" y="190" class="bike">🚲</text>
+        <div id="info-msg" style="font-size: 13px; color: #64748b; line-height: 1.5;">
+            * Değerleri değiştirerek hipotenüsün dikliğini gözlemleyin.
+        </div>
+
+        <div class="stat-card">
+            <div style="font-size: 14px; opacity: 0.8;">HESAPLANAN EĞİM</div>
+            <div id="slope-val" style="font-size: 36px; font-weight: 800;">0.43</div>
+            <div id="percentage" style="font-size: 16px;">%43 Eğim</div>
+        </div>
+
+        <div style="font-size: 11px; text-align: center; color: #475569;">
+            © 2026 Esra İbiş Eğitim Teknolojileri
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div id="grid-bg"></div>
+        <div id="status" class="feedback-badge">Yol Durumu: Stabil ✅</div>
+
+        <div class="canvas-container">
+            <svg id="svg-element" viewBox="0 0 800 500">
+                <defs>
+                    <filter id="neon">
+                        <feGaussianBlur stdDeviation="3" result="blur" />
+                        <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                    </filter>
+                </defs>
+
+                <line x1="50" y1="450" x2="750" y2="450" stroke="#334155" stroke-width="2" />
+                <line x1="50" y1="50" x2="50" y2="450" stroke="#334155" stroke-width="2" />
+
+                <path id="tri-path" d="M 50 450 L 400 450 L 400 150 Z" fill="rgba(0, 210, 255, 0.1)"
+                    stroke="var(--primary)" stroke-width="4" class="glow" />
+
+                <text id="rider" x="200" y="300" class="bike">🚴‍♀️</text>
             </svg>
         </div>
-
-        <p style="font-size: 0.8em; color: #95a5a6;">Matematik Öğretmeni Esra İbiş tarafından geliştirilmiştir.</p>
     </div>
 
     <script>
-        function draw() {
+        function update() {
             const v = parseFloat(document.getElementById('v-input').value) || 0;
             const h = parseFloat(document.getElementById('h-input').value) || 0;
-            const slope = v / h;
+            const m = v / h;
 
-            // Üçgeni güncelle (Başlangıç noktası 50,250)
-            const xBase = 50;
-            const yBase = 250;
-            const newX = xBase + h;
-            const newY = yBase - v;
+            const startX = 50;
+            const startY = 450;
+            const endX = startX + Math.min(h, 650); // Ekran sınırları için
+            const endY = startY - Math.min(v, 350);
 
-            document.getElementById('triangle').setAttribute('points', `${xBase},${yBase} ${newX},${yBase} ${newX},${newY}`);
+            // Üçgeni güncelle
+            const path = `M ${startX} ${startY} L ${endX} ${startY} L ${endX} ${endY} Z`;
+            document.getElementById('tri-path').setAttribute('d', path);
 
-            // Eğim sonucunu yaz
-            document.getElementById('slope-result').innerText = "Eğim (m): " + slope.toFixed(2);
+            // Değerleri yaz
+            document.getElementById('slope-val').innerText = m.toFixed(2);
+            document.getElementById('percentage').innerText = "%" + (m * 100).toFixed(0) + " Eğim";
 
-            // Bisikletliyi hipotenüsün ortasına koy ve eğ
-            const bike = document.getElementById('bike-emoji');
-            bike.setAttribute('x', (xBase + newX) / 2 - 15);
-            bike.setAttribute('y', (yBase + newY) / 2 - 5);
-            const angle = Math.atan(slope) * (-180 / Math.PI);
-            bike.setAttribute('transform', `rotate(${angle}, ${(xBase + newX) / 2}, ${(yBase + newY) / 2})`);
+            // Karakteri hareket ettir
+            const rider = document.getElementById('rider');
+            const midX = (startX + endX) / 2;
+            const midY = (startY + endY) / 2;
+            rider.setAttribute('x', midX - 20);
+            rider.setAttribute('y', midY - 10);
 
-            // Geri bildirim
-            let msg = "";
-            if (slope < 0.2) msg = "Hafif yokuş, bisikletle rahat gidilir! 🚲";
-            else if (slope < 0.6) msg = "Biraz dikleşti, vites küçült! 🚵‍♀️";
-            else msg = "Çok dik! Tam bir tırmanış! 🧗‍♀️";
-            document.getElementById('feedback-text').innerText = msg;
+            // Eğimi döndür
+            const angle = Math.atan2(startY - endY, endX - startX) * (-180 / Math.PI);
+            rider.setAttribute('transform', `rotate(${angle}, ${midX}, ${midY})`);
+
+            // Durum mesajı
+            const status = document.getElementById('status');
+            if (m > 0.8) {
+                status.innerText = "Yol Durumu: Çok Tehlikeli! ⚠️";
+                status.style.borderColor = "#ef4444";
+                status.style.color = "#ef4444";
+                rider.innerHTML = "🧗‍♀️"; // Dağcıya dönüş
+            } else if (m > 0.4) {
+                status.innerText = "Yol Durumu: Dik Yokuş 🚵";
+                status.style.borderColor = "#f59e0b";
+                status.style.color = "#f59e0b";
+                rider.innerHTML = "🚵";
+            } else {
+                status.innerText = "Yol Durumu: Stabil ✅";
+                status.style.borderColor = "#10b981";
+                status.style.color = "#10b981";
+                rider.innerHTML = "🚴‍♀️";
+            }
         }
-        window.onload = draw;
+        window.onload = update;
     </script>
 </body>
 
