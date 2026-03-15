@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Eğim Oyunu</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            background: #eef2ff;
+            text-align: center;
+            margin: 0;
+            padding: 40px;
+        }
+
+        .container {
+            background: white;
+            max-width: 850px;
+            margin: auto;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #2c3e50;
+        }
+
+        .score {
+            font-size: 22px;
+            margin-bottom: 15px;
+            color: #16a085;
+            font-weight: bold;
+        }
+
+        .target {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #e74c3c;
+        }
+
+        .controls {
+            margin: 25px 0;
+        }
+
+        input[type=range] {
+            width: 200px;
+        }
+
+        .value {
+            font-size: 18px;
+            margin-left: 10px;
+        }
+
+        canvas {
+            border: 1px solid #ddd;
+            background: #fafafa;
+            margin-top: 20px;
+        }
+
+        .result {
+            margin-top: 20px;
+            font-size: 20px;
+        }
+
+        button {
+            margin-top: 15px;
+            padding: 10px 20px;
+            border: none;
+            background: #3498db;
+            color: white;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #2980b9;
+        }
+
+        .tip {
+            margin-top: 20px;
+            color: #555;
+            font-size: 15px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>Eğim Avı Oyunu 🎯</h1>
+
+        <div class="score">
+            Puan: <span id="score">0</span>
+        </div>
+
+        <div class="target">
+            Hedef Eğim: <span id="targetSlope">1</span>
+        </div>
+
+        <div class="controls">
+
+            <p>Dikey Uzunluk</p>
+            <input type="range" min="1" max="10" value="3" id="vertical" oninput="update()">
+            <span class="value" id="vValue">3</span>
+
+            <p>Yatay Uzunluk</p>
+            <input type="range" min="1" max="10" value="3" id="horizontal" oninput="update()">
+            <span class="value" id="hValue">3</span>
+
+        </div>
+
+        <canvas id="graph" width="420" height="300"></canvas>
+
+        <div class="result">
+            Senin Eğimin: <span id="slope">1</span>
+        </div>
+
+        <button onclick="checkAnswer()">Kontrol Et</button>
+
+        <div class="tip">
+            Amaç: Sliderları değiştirerek hedef eğime ulaş.
+        </div>
+
+    </div>
+
+    <script>
+
+        let score = 0
+        let targetSlope = randomSlope()
+
+        const canvas = document.getElementById("graph")
+        const ctx = canvas.getContext("2d")
+
+        function randomSlope() {
+
+            let slopes = [0.5, 1, 1.5, 2, 2.5, 3]
+            return slopes[Math.floor(Math.random() * slopes.length)]
+
+        }
+
+        document.getElementById("targetSlope").innerText = targetSlope
+
+        function update() {
+
+            let v = document.getElementById("vertical").value
+            let h = document.getElementById("horizontal").value
+
+            document.getElementById("vValue").innerText = v
+            document.getElementById("hValue").innerText = h
+
+            let slope = (v / h).toFixed(2)
+
+            document.getElementById("slope").innerText = slope
+
+            drawLine(v, h)
+
+        }
+
+        function drawLine(v, h) {
+
+            ctx.clearRect(0, 0, 420, 300)
+
+            let scale = 20
+
+            let x1 = 50
+            let y1 = 250
+
+            let x2 = x1 + h * scale
+            let y2 = y1 - v * scale
+
+            ctx.beginPath()
+            ctx.moveTo(x1, y1)
+            ctx.lineTo(x2, y2)
+            ctx.strokeStyle = "#3498db"
+            ctx.lineWidth = 4
+            ctx.stroke()
+
+        }
+
+        function checkAnswer() {
+
+            let v = document.getElementById("vertical").value
+            let h = document.getElementById("horizontal").value
+
+            let slope = (v / h).toFixed(2)
+
+            if (Math.abs(slope - targetSlope) < 0.2) {
+
+                score += 10
+
+                alert("Doğru! +10 puan 🎉")
+
+                targetSlope = randomSlope()
+
+                document.getElementById("targetSlope").innerText = targetSlope
+
+            } else {
+
+                alert("Biraz daha dene 🙂")
+
+            }
+
+            document.getElementById("score").innerText = score
+
+        }
+
+        update()
+
+    </script>
+
+</body>
+
+</html>
