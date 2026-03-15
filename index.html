@@ -3,166 +3,242 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Eğim Oyunu</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Matematik Keşifleri | Eğim</title>
 
     <style>
+        /* ---------- GENEL ---------- */
+
         body {
-            font-family: Arial;
-            background: #eef2ff;
-            text-align: center;
+            font-family: "Segoe UI", sans-serif;
             margin: 0;
-            padding: 40px;
+            background: #f7f7fb;
+            color: #333;
         }
+
+        /* geometrik arka plan */
+
+        body::before {
+            content: "";
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            background-image:
+                linear-gradient(45deg, rgba(180, 180, 220, 0.1) 25%, transparent 25%),
+                linear-gradient(-45deg, rgba(180, 180, 220, 0.1) 25%, transparent 25%);
+            background-size: 60px 60px;
+            z-index: -1;
+        }
+
+        /* ---------- HEADER ---------- */
+
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            background: #ece9ff;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 32px;
+        }
+
+        header p {
+            margin-top: 10px;
+            color: #555;
+        }
+
+        /* ---------- ANA BÖLÜM ---------- */
 
         .container {
-            background: white;
-            max-width: 850px;
+            max-width: 900px;
             margin: auto;
             padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
         }
 
-        h1 {
-            color: #2c3e50;
+        /* kart görünümü */
+
+        .card {
+            background: white;
+            border-radius: 14px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
         }
 
-        .score {
-            font-size: 22px;
-            margin-bottom: 15px;
-            color: #16a085;
-            font-weight: bold;
-        }
-
-        .target {
-            font-size: 24px;
-            margin-bottom: 20px;
-            color: #e74c3c;
-        }
+        /* ---------- SLIDER ---------- */
 
         .controls {
-            margin: 25px 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .control {
+            flex: 1;
+            min-width: 200px;
         }
 
         input[type=range] {
-            width: 200px;
+            width: 100%;
         }
 
         .value {
-            font-size: 18px;
-            margin-left: 10px;
+            font-weight: bold;
+            color: #6a5acd;
         }
 
-        canvas {
-            border: 1px solid #ddd;
-            background: #fafafa;
-            margin-top: 20px;
+        /* ---------- SVG ---------- */
+
+        svg {
+            width: 100%;
+            max-width: 500px;
+            margin: auto;
+            display: block;
         }
 
-        .result {
-            margin-top: 20px;
-            font-size: 20px;
+        /* ---------- PROJELER ---------- */
+
+        .projects {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
         }
 
-        button {
-            margin-top: 15px;
-            padding: 10px 20px;
-            border: none;
-            background: #3498db;
-            color: white;
-            font-size: 16px;
-            border-radius: 8px;
-            cursor: pointer;
+        .project {
+            background: #f4f3ff;
+            padding: 20px;
+            border-radius: 12px;
         }
 
-        button:hover {
-            background: #2980b9;
+        .project h3 {
+            margin-top: 0;
         }
 
-        .tip {
-            margin-top: 20px;
-            color: #555;
-            font-size: 15px;
+        .project p {
+            font-size: 14px;
+        }
+
+        /* ---------- MOBİL ---------- */
+
+        @media(max-width:600px) {
+
+            header h1 {
+                font-size: 24px;
+            }
+
         }
     </style>
 </head>
 
 <body>
 
+    <header>
+        <h1>Matematik Keşifleri</h1>
+        <p>Matematik öğretmeni için interaktif öğrenme alanı</p>
+    </header>
+
+
     <div class="container">
 
-        <h1>Eğim Avı Oyunu 🎯</h1>
+        <!-- EĞİM DEMOSU -->
 
-        <div class="score">
-            Puan: <span id="score">0</span>
+        <div class="card">
+
+            <h2>Eğim Keşif Aracı</h2>
+            <p>Dikey ve yatay uzunlukları değiştirerek eğimin nasıl değiştiğini gözlemle.</p>
+
+            <div class="controls">
+
+                <div class="control">
+                    <label>Dikey Uzunluk (Yükseklik)</label>
+                    <input type="range" min="1" max="10" value="4" id="vertical">
+                    <span class="value" id="vValue">4</span>
+                </div>
+
+                <div class="control">
+                    <label>Yatay Uzunluk (Taban)</label>
+                    <input type="range" min="1" max="10" value="6" id="horizontal">
+                    <span class="value" id="hValue">6</span>
+                </div>
+
+            </div>
+
+            <h3>Eğim = <span id="slope">0.67</span></h3>
+
+            <svg id="triangleSVG" viewBox="0 0 400 300">
+
+                <polygon id="triangle" points="50,250 250,250 250,150" fill="#dcd9ff" stroke="#6a5acd"
+                    stroke-width="3" />
+
+                <text id="baseLabel" x="150" y="270" font-size="16">x</text>
+                <text id="heightLabel" x="260" y="200" font-size="16">y</text>
+
+            </svg>
+
         </div>
 
-        <div class="target">
-            Hedef Eğim: <span id="targetSlope">1</span>
-        </div>
 
-        <div class="controls">
+        <!-- PROJELER -->
 
-            <p>Dikey Uzunluk</p>
-            <input type="range" min="1" max="10" value="3" id="vertical" oninput="update()">
-            <span class="value" id="vValue">3</span>
+        <div class="card">
 
-            <p>Yatay Uzunluk</p>
-            <input type="range" min="1" max="10" value="3" id="horizontal" oninput="update()">
-            <span class="value" id="hValue">3</span>
+            <h2>Projelerim</h2>
 
-        </div>
+            <div class="projects">
 
-        <canvas id="graph" width="420" height="300"></canvas>
+                <div class="project">
+                    <h3>Eğim Oyunu</h3>
+                    <p>Öğrencilerin hedef eğimi yakalamaya çalıştığı interaktif etkinlik.</p>
+                </div>
 
-        <div class="result">
-            Senin Eğimin: <span id="slope">1</span>
-        </div>
+                <div class="project">
+                    <h3>Alan Tasarım Oyunu</h3>
+                    <p>Kareli zeminde verilen alanı oluşturarak öğrenilen matematik oyunu.</p>
+                </div>
 
-        <button onclick="checkAnswer()">Kontrol Et</button>
+                <div class="project">
+                    <h3>Fonksiyon Grafikleri</h3>
+                    <p>Fonksiyonların grafiklerini keşfetmeye yönelik etkileşimli araç.</p>
+                </div>
 
-        <div class="tip">
-            Amaç: Sliderları değiştirerek hedef eğime ulaş.
+            </div>
+
         </div>
 
     </div>
 
+
     <script>
 
-        let score = 0
-        let targetSlope = randomSlope()
+        const vSlider = document.getElementById("vertical")
+        const hSlider = document.getElementById("horizontal")
 
-        const canvas = document.getElementById("graph")
-        const ctx = canvas.getContext("2d")
+        const vValue = document.getElementById("vValue")
+        const hValue = document.getElementById("hValue")
 
-        function randomSlope() {
+        const slopeText = document.getElementById("slope")
 
-            let slopes = [0.5, 1, 1.5, 2, 2.5, 3]
-            return slopes[Math.floor(Math.random() * slopes.length)]
+        const triangle = document.getElementById("triangle")
 
-        }
+        const baseLabel = document.getElementById("baseLabel")
+        const heightLabel = document.getElementById("heightLabel")
 
-        document.getElementById("targetSlope").innerText = targetSlope
+        function updateTriangle() {
 
-        function update() {
+            let v = parseFloat(vSlider.value)
+            let h = parseFloat(hSlider.value)
 
-            let v = document.getElementById("vertical").value
-            let h = document.getElementById("horizontal").value
-
-            document.getElementById("vValue").innerText = v
-            document.getElementById("hValue").innerText = h
+            vValue.textContent = v
+            hValue.textContent = h
 
             let slope = (v / h).toFixed(2)
 
-            document.getElementById("slope").innerText = slope
+            slopeText.textContent = slope
 
-            drawLine(v, h)
-
-        }
-
-        function drawLine(v, h) {
-
-            ctx.clearRect(0, 0, 420, 300)
+            /* ölçek */
 
             let scale = 20
 
@@ -172,43 +248,29 @@
             let x2 = x1 + h * scale
             let y2 = y1 - v * scale
 
-            ctx.beginPath()
-            ctx.moveTo(x1, y1)
-            ctx.lineTo(x2, y2)
-            ctx.strokeStyle = "#3498db"
-            ctx.lineWidth = 4
-            ctx.stroke()
+            /* üçgen */
+
+            triangle.setAttribute(
+                "points",
+                `${x1},${y1} ${x2},${y1} ${x2},${y2}`
+            )
+
+            /* etiket */
+
+            baseLabel.setAttribute("x", (x1 + x2) / 2)
+            baseLabel.setAttribute("y", y1 + 20)
+            baseLabel.textContent = "x = " + h
+
+            heightLabel.setAttribute("x", x2 + 10)
+            heightLabel.setAttribute("y", (y1 + y2) / 2)
+            heightLabel.textContent = "y = " + v
 
         }
 
-        function checkAnswer() {
+        vSlider.addEventListener("input", updateTriangle)
+        hSlider.addEventListener("input", updateTriangle)
 
-            let v = document.getElementById("vertical").value
-            let h = document.getElementById("horizontal").value
-
-            let slope = (v / h).toFixed(2)
-
-            if (Math.abs(slope - targetSlope) < 0.2) {
-
-                score += 10
-
-                alert("Doğru! +10 puan 🎉")
-
-                targetSlope = randomSlope()
-
-                document.getElementById("targetSlope").innerText = targetSlope
-
-            } else {
-
-                alert("Biraz daha dene 🙂")
-
-            }
-
-            document.getElementById("score").innerText = score
-
-        }
-
-        update()
+        updateTriangle()
 
     </script>
 
