@@ -4,19 +4,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Eğim Master Pro | Esra İbiş</title>
+    <title>Eğim Master Pro | Soru Modülü</title>
     <style>
         :root {
             --primary: #00d2ff;
             --secondary: #3a7bd5;
             --bg: #0f172a;
-            --card-bg: rgba(30, 41, 59, 0.7);
             --text: #f8fafc;
         }
 
         body {
             font-family: 'Poppins', sans-serif;
-            background: radial-gradient(circle at top right, #1e293b, #0f172a);
+            background: #0f172a;
             color: var(--text);
             margin: 0;
             display: flex;
@@ -24,40 +23,39 @@
             overflow: hidden;
         }
 
-        /* Sol Panel - Kontrol Merkezi */
+        /* Sol Panel */
         .sidebar {
-            width: 320px;
-            background: var(--card-bg);
+            width: 350px;
+            background: rgba(30, 41, 59, 0.8);
             backdrop-filter: blur(10px);
+            padding: 25px;
             border-right: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 30px;
             display: flex;
             flex-direction: column;
-            gap: 20px;
-            z-index: 10;
+            gap: 15px;
+            overflow-y: auto;
         }
 
         .logo {
-            font-size: 24px;
+            font-size: 22px;
             font-weight: bold;
-            background: linear-gradient(to right, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 20px;
+            color: var(--primary);
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .quiz-section {
+            background: rgba(0, 210, 255, 0.1);
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px dashed var(--primary);
         }
 
         .input-box {
             background: rgba(255, 255, 255, 0.05);
-            padding: 15px;
-            border-radius: 12px;
+            padding: 12px;
+            border-radius: 10px;
             border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-size: 14px;
-            color: #94a3b8;
         }
 
         input {
@@ -66,43 +64,49 @@
             border: none;
             border-bottom: 2px solid var(--primary);
             color: white;
-            font-size: 20px;
-            padding: 5px 0;
+            font-size: 18px;
             outline: none;
         }
 
-        .stat-card {
-            background: linear-gradient(135deg, var(--secondary), var(--primary));
-            padding: 20px;
-            border-radius: 15px;
-            margin-top: auto;
-            text-align: center;
+        button {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+            transition: 0.3s;
         }
 
-        /* Sağ Panel - Simülasyon Alanı */
+        button:hover {
+            background: var(--primary);
+            transform: scale(1.02);
+        }
+
+        /* Sağ Panel */
         .main-content {
             flex-grow: 1;
             position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
+            background: radial-gradient(circle, #1e293b, #0f172a);
         }
 
-        #grid-bg {
+        #grid {
             position: absolute;
             width: 100%;
             height: 100%;
-            background-image:
-                linear-gradient(rgba(0, 210, 255, 0.05) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 210, 255, 0.05) 1px, transparent 1px);
-            background-size: 40px 40px;
+            background-image: linear-gradient(rgba(0, 210, 255, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 210, 255, 0.03) 1px, transparent 1px);
+            background-size: 30px 30px;
         }
 
         .canvas-container {
-            position: relative;
             width: 80%;
-            height: 70%;
-            z-index: 5;
+            height: 60%;
+            position: relative;
         }
 
         svg {
@@ -112,23 +116,18 @@
         }
 
         .bike {
-            font-size: 45px;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            font-size: 40px;
+            transition: 0.5s;
         }
 
-        .glow {
-            filter: drop-shadow(0 0 8px var(--primary));
-        }
-
-        .feedback-badge {
+        .badge {
             position: absolute;
-            top: 40px;
-            right: 40px;
-            padding: 12px 25px;
-            background: rgba(0, 210, 255, 0.1);
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            border-radius: 30px;
+            background: rgba(0, 0, 0, 0.5);
             border: 1px solid var(--primary);
-            border-radius: 50px;
-            font-weight: 600;
         }
     </style>
 </head>
@@ -136,107 +135,99 @@
 <body>
 
     <div class="sidebar">
-        <div class="logo">EĞİM MASTER V1.0</div>
+        <div class="logo">📐 LGS EĞİM ATÖLYESİ</div>
 
-        <div class="input-box">
-            <label>DİKEY YÜKSEKLİK (y)</label>
-            <input type="number" id="v-input" value="150" oninput="update()">
+        <div class="quiz-section">
+            <strong style="color: var(--primary);">🎯 Günün Sorusu:</strong>
+            <p id="question-text" style="font-size: 14px; margin: 10px 0;">Soru yükleniyor...</p>
+            <button onclick="generateQuestion()">Yeni Soru Sor</button>
         </div>
 
         <div class="input-box">
-            <label>YATAY UZUNLUK (x)</label>
-            <input type="number" id="h-input" value="350" oninput="update()">
+            <label style="font-size: 12px;">DİKEY YÜKSEKLİK (y)</label>
+            <input type="number" id="v-input" value="100" oninput="update()">
         </div>
 
-        <div id="info-msg" style="font-size: 13px; color: #64748b; line-height: 1.5;">
-            * Değerleri değiştirerek hipotenüsün dikliğini gözlemleyin.
+        <div class="input-box">
+            <label style="font-size: 12px;">YATAY UZUNLUK (x)</label>
+            <input type="number" id="h-input" value="200" oninput="update()">
         </div>
 
-        <div class="stat-card">
-            <div style="font-size: 14px; opacity: 0.8;">HESAPLANAN EĞİM</div>
-            <div id="slope-val" style="font-size: 36px; font-weight: 800;">0.43</div>
-            <div id="percentage" style="font-size: 16px;">%43 Eğim</div>
+        <div id="result-card"
+            style="background: var(--secondary); padding: 15px; border-radius: 10px; text-align: center;">
+            <div style="font-size: 12px;">HESAPLANAN EĞİM</div>
+            <div id="m-val" style="font-size: 28px; font-weight: bold;">0.50</div>
+            <div id="p-val">%50</div>
         </div>
 
-        <div style="font-size: 11px; text-align: center; color: #475569;">
-            © 2026 Esra İbiş Eğitim Teknolojileri
-        </div>
+        <button id="check-btn" onclick="checkAnswer()" style="background: #10b981;">Cevabı Kontrol Et</button>
     </div>
 
     <div class="main-content">
-        <div id="grid-bg"></div>
-        <div id="status" class="feedback-badge">Yol Durumu: Stabil ✅</div>
+        <div id="grid"></div>
+        <div id="feedback" class="badge">Keşfetmeye Hazır mısın?</div>
 
         <div class="canvas-container">
-            <svg id="svg-element" viewBox="0 0 800 500">
-                <defs>
-                    <filter id="neon">
-                        <feGaussianBlur stdDeviation="3" result="blur" />
-                        <feComposite in="SourceGraphic" in2="blur" operator="over" />
-                    </filter>
-                </defs>
-
-                <line x1="50" y1="450" x2="750" y2="450" stroke="#334155" stroke-width="2" />
-                <line x1="50" y1="50" x2="50" y2="450" stroke="#334155" stroke-width="2" />
-
-                <path id="tri-path" d="M 50 450 L 400 450 L 400 150 Z" fill="rgba(0, 210, 255, 0.1)"
-                    stroke="var(--primary)" stroke-width="4" class="glow" />
-
-                <text id="rider" x="200" y="300" class="bike">🚴‍♀️</text>
+            <svg viewBox="0 0 800 400">
+                <path id="tri" d="M 50 350 L 250 350 L 250 250 Z" fill="rgba(0, 210, 255, 0.1)" stroke="#00d2ff"
+                    stroke-width="4" />
+                <text id="bike" x="150" y="300" class="bike">🚴‍♀️</text>
             </svg>
         </div>
     </div>
 
     <script>
+        let currentTargetSlope = 0;
+
+        function generateQuestion() {
+            const types = [
+                { n: "Bir engelli rampasının", d: "dikey yüksekliği {y} m, yatay uzunluğu {x} m'dir. Eğimi kaçtır?" },
+                { n: "Bir çatının", d: "yüksekliği {y} cm, genişliği {x} cm'dir. Bu çatının eğimi yüzde kaçtır?" },
+                { n: "Bir merdivenin", d: "basamak yüksekliği {y} birim, genişliği {x} birimdir. Eğimi bulunuz." }
+            ];
+            const q = types[Math.floor(Math.random() * types.length)];
+            const y = Math.floor(Math.random() * 80) + 20;
+            const x = Math.floor(Math.random() * 100) + 50;
+            currentTargetSlope = (y / x).toFixed(2);
+
+            document.getElementById('question-text').innerText = q.d.replace('{y}', y).replace('{x}', x);
+            document.getElementById('feedback').innerText = "Soruyu çöz ve değerleri gir!";
+            document.getElementById('feedback').style.color = "white";
+        }
+
         function update() {
             const v = parseFloat(document.getElementById('v-input').value) || 0;
             const h = parseFloat(document.getElementById('h-input').value) || 0;
             const m = v / h;
 
-            const startX = 50;
-            const startY = 450;
-            const endX = startX + Math.min(h, 650); // Ekran sınırları için
-            const endY = startY - Math.min(v, 350);
+            const startX = 50, startY = 350;
+            const endX = startX + Math.min(h * 2, 600);
+            const endY = startY - Math.min(v * 2, 300);
 
-            // Üçgeni güncelle
-            const path = `M ${startX} ${startY} L ${endX} ${startY} L ${endX} ${endY} Z`;
-            document.getElementById('tri-path').setAttribute('d', path);
+            document.getElementById('tri').setAttribute('d', `M ${startX} ${startY} L ${endX} ${startY} L ${endX} ${endY} Z`);
+            document.getElementById('m-val').innerText = m.toFixed(2);
+            document.getElementById('p-val').innerText = "%" + (m * 100).toFixed(0);
 
-            // Değerleri yaz
-            document.getElementById('slope-val').innerText = m.toFixed(2);
-            document.getElementById('percentage').innerText = "%" + (m * 100).toFixed(0) + " Eğim";
-
-            // Karakteri hareket ettir
-            const rider = document.getElementById('rider');
-            const midX = (startX + endX) / 2;
-            const midY = (startY + endY) / 2;
-            rider.setAttribute('x', midX - 20);
-            rider.setAttribute('y', midY - 10);
-
-            // Eğimi döndür
+            const rider = document.getElementById('bike');
+            const midX = (startX + endX) / 2, midY = (startY + endY) / 2;
+            rider.setAttribute('x', midX - 20); rider.setAttribute('y', midY - 10);
             const angle = Math.atan2(startY - endY, endX - startX) * (-180 / Math.PI);
             rider.setAttribute('transform', `rotate(${angle}, ${midX}, ${midY})`);
+        }
 
-            // Durum mesajı
-            const status = document.getElementById('status');
-            if (m > 0.8) {
-                status.innerText = "Yol Durumu: Çok Tehlikeli! ⚠️";
-                status.style.borderColor = "#ef4444";
-                status.style.color = "#ef4444";
-                rider.innerHTML = "🧗‍♀️"; // Dağcıya dönüş
-            } else if (m > 0.4) {
-                status.innerText = "Yol Durumu: Dik Yokuş 🚵";
-                status.style.borderColor = "#f59e0b";
-                status.style.color = "#f59e0b";
-                rider.innerHTML = "🚵";
+        function checkAnswer() {
+            const userSlope = (parseFloat(document.getElementById('v-input').value) / parseFloat(document.getElementById('h-input').value)).toFixed(2);
+            const fb = document.getElementById('feedback');
+            if (userSlope == currentTargetSlope) {
+                fb.innerText = "MUHTEŞEM! Doğru cevap! 🎉";
+                fb.style.color = "#10b981";
             } else {
-                status.innerText = "Yol Durumu: Stabil ✅";
-                status.style.borderColor = "#10b981";
-                status.style.color = "#10b981";
-                rider.innerHTML = "🚴‍♀️";
+                fb.innerText = "Hmm, değerleri tekrar kontrol et. 🧐";
+                fb.style.color = "#ef4444";
             }
         }
-        window.onload = update;
+
+        window.onload = () => { generateQuestion(); update(); };
     </script>
 </body>
 
